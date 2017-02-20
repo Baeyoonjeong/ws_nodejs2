@@ -1,6 +1,5 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var User = require('../models/user');
 var mysql = require('mysql');
 var dbConfig     = require('../config/database_mysql');
 var connection = mysql.createPool(dbConfig);
@@ -26,19 +25,22 @@ module.exports = function (app) {
         passwordField : 'password',
         passReqToCallback:true
     }, function(req, email, password, done){
+
       var sqlSelectList = "SELECT * FROM USER WHERE `EMAIL` = ?";
-      connection.query(sqlSelectList, email,
-        function(err, rows){
-          var user = rows[0];
+      connection.query(sqlSelectList, email, function(err, rows){
+          console.log(rows);
+          var user = rows;
           if(err){
             return done(err);
           }
 
           if(!user){
+            console.log(">>>No user found.");
             return done(null, false, req.flash('loginError', 'No user found.'));
           }
 
           if(user.PASSWORD != password){
+            console.log(">>>Password does not Match.");
             return done(null, false, req.flash('loginError', 'Password does not Match.'));
           }
 

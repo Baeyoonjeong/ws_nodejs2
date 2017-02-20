@@ -1,12 +1,11 @@
 var mysql = require('mysql');
 
 var dbConfig = {
-    host : 'localhost',
-    user : 'root',
-    password : '1111',
-    port : 3306,
-    multipleStatements : true,
-    database : 'test'
+  host : 'localhost',
+  port : 3306,
+  user : 'root',
+  password : '1111',
+  database : 'test'
 };
 
 var pool = mysql.createPool(dbConfig);

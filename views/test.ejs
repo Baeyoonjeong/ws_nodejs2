@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!--ng-app을 선언하여 angular를 사용-->
+<html lang="en" ng-app="helloApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/js/angular.js"></script>
+    <!-- <script src="bower_components/angular/angular.js"></script> -->
+
+    <script>
+        var app = angular.module("helloApp",[]);
+
+        app.controller("ctrl",["$scope",function($scope){
+            $scope.txt = "Hello world";
+            $scope.name = "홍길동";
+        }]);
+
+//        프론트엔드 MVC 프레임 워크
+//        MVC 모델
+//        M(model) : 데이터
+//        V(View) : HTML 화면
+//        C(Controller) : Model 과 View의 관제 역할
+    </script>
+    <style>
+        h2 {
+            width: 100px;
+            transition: .3s ease;
+            transform: perspective(500px) rotateY(0deg) scale(0.5);
+        }
+        .s1{
+            border: 1px solid red;
+            transform: perspective(500px)  rotateY(720deg) scale(1.2);
+        }
+    </style>
+</head>
+<body ng-controller="ctrl">
+
+    <input type="checkbox" id="toggle" ng-model="toggle">
+    <!--<p>{{toggle}}</p>-->
+
+    <h2 ng-class="{s1:toggle}">{{name}}</h2>
+    <input type="text" ng-model="txt" value="hello"/>
+    <h1>{{txt}}</h1>
+</body>
+</html>

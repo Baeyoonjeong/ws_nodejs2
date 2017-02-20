@@ -10,21 +10,30 @@
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <!-- font awesome -->
-    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <!-- <link href="css/font-awesome.min.css" rel="stylesheet"> -->
     <!-- Custom Style -->
-    <link href="css/style.css" rel="stylesheet">
+    <!-- <link href="css/style.css" rel="stylesheet"> -->
     <!-- angularJS CDN script 태그 추가  -->
-    <script src="..js/angular.js"></script>
+    <script src="js/angular.min.js"></script>
 
     <script>
       var app = angular.module('myApp', []);
-      app.controller('myCtrl', function($scope)){
-        $scope.email = "admin";
-        //$scope.pwd = "1234";
-        console.log("");
+
+      app.controller("myCtrl",function($scope, $http, $location) {
+        $scope.email = 'bae419@naver.com';
+        $scope.password = '1111';
+        // 로그인 버튼 핸들러
+        $scope.goLogin = function () {
+          $scope.msg = '';
+
+          // 백엔드에 인증을 시도한다.
+          $http.post('/users/login', {
+            email: $scope.email,
+            password: $scope.password
+          });
+        };
+
       });
-
-
     </script>
   </head>
   <body ng-controller="myCtrl">
@@ -35,23 +44,26 @@
         </div>
         <div class="col-md-3">
           <div class="login-box well">
-        <form accept-charset="UTF-8" role="form" method="post" ng-submit="goLogin()">
-            <legend>로그인</legend>
-            <div class="form-group">
-                <label for="username-email">이메일</label>
-                <input name="email"  id="email" placeholder="E-mail" type="text" class="form-control" ng-model="email"/>
-            </div>
-            <div class="form-group">
-                <label for="password">비밀번호</label>
-                <input name="password" id="password"  placeholder="Password" type="password" class="form-control" ng-model="formData.password"/>
-            </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-default btn-login-submit btn-block m-t-md" value="Login" />
-                <!-- <a href="" class="btn btn-default btn-block m-t-md"> 회원가입</a> -->
-                <!-- <button class="btn btn-default btn-login-submit btn-block m-t-md" ng-click="goLogin()" >로그인</button> -->
-                <button class="btn btn-default btn-login-submit btn-block m-t-md" ng-click="goLogin()" >회원가입</button>
-            </div>
-        </form>
+            <form accept-charset="UTF-8" role="form" method="post" ng-submit="goLogin()">
+                <legend>로그인</legend>
+                <div class="form-group">
+                    <label for="username-email">이메일</label>
+                    <input name="email"  id="email" placeholder="E-mail" type="text" class="form-control" ng-model="email"/>
+                </div>
+                <div class="form-group">
+                    <label for="password">비밀번호</label>
+                    <input name="password" id="password"  placeholder="Password" type="password" class="form-control" ng-model="password"/>
+                </div>
+                <div class="form-group">
+                  <scan name="msg" id="msg"  class="form-control" ng-model="msg"/>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-default btn-login-submit btn-block m-t-md" value="Login" />
+                    <!-- <a href="" class="btn btn-default btn-block m-t-md"> 회원가입</a> -->
+                    <!-- <button class="btn btn-default btn-login-submit btn-block m-t-md" ng-click="goLogin()" >로그인</button> -->
+                    <button class="btn btn-default btn-login-submit btn-block m-t-md" ng-click="goLogin()" >회원가입</button>
+                </div>
+            </form>
           </div>
         </div>
       </div>

@@ -15,21 +15,21 @@ router.get('/', function(req, res, next) {
 //게시판 리스트
 router.get('/board_main', function(req, res, next){
   console.log("board_main");
-  if (req.isAuthenticated()) {
-    connection.getConnection(function (err, connection) {
-      // Use the connection
-      var sqlSelectList = "SELECT TITLE,BODY,AUTHOR,VIEWS,NUMID,DATE_FORMAT(CREATEDAT,'%Y-%m-%d %H:%i:%s') CREATEDAT,DATE_FORMAT(UPDATEDAT,'%Y-%m-%d %H:%i:%s') UPDATEDAT FROM BOARD";
-      connection.query(sqlSelectList, function (err, rows) {
-        if (err) console.error("err : " + err);
-
-        res.render('board_list', {user: req.session.passport.user, rows: rows});
-        connection.release();
-        // Don't use the connection here, it has been returned to the pool.
-      });
-    });
-  } else {
-      res.redirect('/login');
-  }
+  // if (req.isAuthenticated()) {
+  //   connection.getConnection(function (err, connection) {
+  //     // Use the connection
+  //     var sqlSelectList = "SELECT TITLE,BODY,AUTHOR,VIEWS,NUMID,DATE_FORMAT(CREATEDAT,'%Y-%m-%d %H:%i:%s') CREATEDAT,DATE_FORMAT(UPDATEDAT,'%Y-%m-%d %H:%i:%s') UPDATEDAT FROM BOARD";
+  //     connection.query(sqlSelectList, function (err, rows) {
+  //       if (err) console.error("err : " + err);
+  //
+  //       res.render('board_list', {user: req.session.passport.user, rows: rows});
+  //       connection.release();
+  //       // Don't use the connection here, it has been returned to the pool.
+  //     });
+  //   });
+  // } else {
+  //     res.redirect('/login');
+  // }
 });
 
 //게시판 등록
