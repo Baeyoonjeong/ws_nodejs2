@@ -4,9 +4,11 @@ var passport = require('passport');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('login', { title: 'Express' });
+  res.redirect('/login');
 });
 
-
+router.get('/login', function(req, res, next) {
+  res.render('login', {title: 'Express', loginError: ''});    // 기본페이지
+});
 
 module.exports = router;

@@ -9,7 +9,7 @@ var passport      = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var flash       = require('connect-flash');
 
-var dbconfig     = require('./config/database_mysql.js');
+//var dbconfig     = require('./config/database_mysql').pool;
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -18,7 +18,8 @@ var board = require('./routes/board');
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+//app.set('views', path.join(__dirname, 'views'));
+app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
@@ -46,11 +47,11 @@ app.use('/board', board);
 app.use(flash());
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+// app.use(function(req, res, next) {
+//   var err = new Error('Not Found');
+//   err.status = 404;
+//   next(err);
+// });
 
 // // error handler
 // app.use(function(err, req, res, next) {

@@ -5,23 +5,26 @@ var passport = require('passport');
 
 /*GET Home page*/
 router.get('/', function(req, res, next){
-  res.render('login', {title: 'Express'});    // 기본페이지
+  res.render('login', {title: 'Express', loginError: ''});    // 기본페이지
 });
 
 router.get('/login', function(req, res, next){
   console.log(">>>>>>로그인다");
-  res.render('login', {email: req.flash("email")[0], loginError:req.flash('loginError')});    // 기본페이지
+  res.render('login', {loginError:''});    // 기본페이지
+});
+
+
+router.get('/login_success', function(req, res, next){
+  res.redirect('/board/board_main');
 });
 
 router.route('/login').post(
   passport.authenticate('local-login', {
-    successRedirect:'/login',   // 로그인이 성공하면 profile로 가고
-    failureRedirect:'/login',     // 실패하면 login으로 다시 간다.
-    failureFlash:true
+    successRedirect:'/users/login_success',   // 로그인이 성공하면 profile로 가고
+    failureRedirect:'/login'     // 실패하면 login으로 다시 간다.
+    //failureFlash:true
   })
 );
-
-
 
 router.get('/logout', function(req, res) {
     req.logout();
