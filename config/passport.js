@@ -1,9 +1,7 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var connection     = require('../config/database_mysql');
-var flash=require("connect-flash");
-
-
+var flash = require("connect-flash");
 
 module.exports = function (app) {
 
@@ -24,27 +22,25 @@ module.exports = function (app) {
   app.use('local-login',  new LocalStrategy({
         usernameField : 'email',
         passwordField : 'password',
-        passReqToCallback:true
+        passReqToCallback : true
     }, function(req, email, password, done){
       connection.getConnection(function(err, conn){
         var sqlSelectList = "SELECT * FROM TB_USER WHERE `EMAIL` = ?";
         connection.query(sqlSelectList, email, function(err, rows){
-            console.log(rows);
-            var user = rows;
+            console.log(rows[0]);
+            var user = rows[0];
             if(err){
               return done(err);
-            }
-
+            };
             if(!user){
               console.log(">>>No user found.");
-              return done(null, false, req.flash('loginError', 'No user found.'));
-            }
-
-            if(user.PASSWORD != password){
-              console.log(">>>Password does not Match.");
-              return done(null, false, req.flash('loginError', 'Password does not Match.'));
-            }
-
+              //return done(null, false, req.flash('loginError', 'No user found.'));
+              return done(null, false); // create the loginMessage and save it to session as flashdata
+            };
+            // if(user.PASSWORD != password){
+            //   console.log(">>>Password does not Match.");
+            //   return done(null, false); // create the loginMessage and save it to session as flashdata
+            // };
             return done(null, user);
 
           });
