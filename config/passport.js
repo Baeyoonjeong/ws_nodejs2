@@ -25,24 +25,22 @@ module.exports = function (app) {
         passReqToCallback : true
     }, function(req, email, password, done){
       connection.getConnection(function(err, conn){
-        var sqlSelectList = "SELECT * FROM TB_USER WHERE `EMAIL` = ?";
+        var sqlSelectList = "SELECT * FROM TB_USER WHERE `EMAIL` = ? ";
         connection.query(sqlSelectList, email, function(err, rows){
             console.log(rows[0]);
             var user = rows[0];
             if(err){
               return done(err);
-            };
-            if(!user){
-              console.log(">>>No user found.");
+            }
+            if(!user) {
               //return done(null, false, req.flash('loginError', 'No user found.'));
               return done(null, false); // create the loginMessage and save it to session as flashdata
-            };
-            // if(user.PASSWORD != password){
-            //   console.log(">>>Password does not Match.");
-            //   return done(null, false); // create the loginMessage and save it to session as flashdata
-            // };
-            return done(null, user);
+            }
+            if(user.PASSWORD != password){
+              return done(null, false); // create the loginMessage and save it to session as flashdata
+            }
 
+            return done(null, user);
           });
       });
     }

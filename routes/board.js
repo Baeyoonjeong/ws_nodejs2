@@ -1,32 +1,30 @@
-
 var express = require('express');
-var mysql = require('mysql');
-var connection     = require('../config/database_mysql');
 var router = express.Router();
-
+var connection     = require('../config/database_mysql');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
     // 그냥 board/ 로 접속할 경우 전체 목록 표시로 리다이렉팅
-    res.redirect('/board_list');
+    console.log("board");
+    res.redirect('/board/board_main');
 });
 
 //게시판 리스트
 router.get('/board_main', function(req, res, next){
   if (req.isAuthenticated()) {
     connection.getConnection(function (err, connection) {
-      // Use the connection
-      var sqlSelectList = "SELECT TITLE,BODY,AUTHOR,VIEWS,NUMID,DATE_FORMAT(CREATEDAT,'%Y-%m-%d %H:%i:%s') CREATEDAT,DATE_FORMAT(UPDATEDAT,'%Y-%m-%d %H:%i:%s') UPDATEDAT FROM To_BOARD";
+      var sqlSelectList = "SELECT TITLE,BODY,AUTHOR,VIEWS,NUMID,DATE_FORMAT(CREATEDAT,'%Y-%m-%d %H:%i:%s') CREATEDAT,DATE_FORMAT(UPDATEDAT,'%Y-%m-%d %H:%i:%s') UPDATEDAT FROM TB_BOARD";
       connection.query(sqlSelectList, function (err, rows) {
-        if (err) console.error("err : " + err);
-
-        res.render('board_list', {user: req.session.passport.user, rows: rows});
+        if (err){
+          console.error("err : " + err);
+        }
+        res.render('board', {user: req.session.passport.user, rows: rows});
+        //res.render('board', {title: 'MeanStack Study'});    // 기본페이지
         connection.release();
-        // Don't use the connection here, it has been returned to the pool.
       });
     });
   } else {
-      res.redirect('/login');
+    res.redirect('/login');
   }
 });
 
@@ -47,8 +45,8 @@ router.post('/board_insert', function(req, res) {
     connection.query(sqlForInsertBoard,datas, function (err, rows) {
        if (err) console.error("err : " + err);
        console.log("rows : " + JSON.stringify(rows));
+       res.render('board', {title: 'MeanStack Study', user: req.session.passport.user, rows: rows});
 
-       res.redirect('/board/board_main');
        connection.release();
        // Don't use the connection here, it has been returned to the pool.
     });

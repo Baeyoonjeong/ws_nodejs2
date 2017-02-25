@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/login', function(req, res, next) {
-  res.render('login', {title: 'Express', loginError: ''});    // 기본페이지
+  res.render('login', {title: 'MeanStack Study', loginError: 'loginError'});    // 기본페이지
 });
 
 module.exports = router;

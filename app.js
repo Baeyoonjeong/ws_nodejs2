@@ -3,7 +3,7 @@ var path = require('path');
 var favicon = require('serve-favicon');
 
 var router = express.Router();
-//var bcrypt = require('bcrypt');
+var bcrypt = require('bcrypt');
 
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');

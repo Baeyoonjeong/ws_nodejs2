@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <!-- <script type="text/javascript" src="/bootstrap/js/bootstrap-datepicker.kr.js"></script> -->
+
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 450px}
+
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Logo</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Projects</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/logout"><strong>배윤정 님</strong>&nbsp;&nbsp; <span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp; Logout</a>
+        </li>
+        <!-- <li><span style="color:white"><%= user.email %> 님</span></li> -->
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid text-center">
+  <div class="row content" style="height:550px">
+    <div class="col-sm-2 sidenav">
+      <p><a href="#">게시판</a></p>
+      <p><a href="#">공지사항</a></p>
+    </div>
+    <div class="col-sm-8 text-left">
+      <br/>
+      <div class="container">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#insert_modal">등록</button>
+            <button type="button" class="btn btn-success btn-xs" onclick="doDelete()">삭제</button>
+          </div>
+          <div class="panel-body">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th width="40px"></th>
+                  <th width="50px"></th>
+                  <th width="350px">제목</th>
+                  <th width="450px">내용</th>
+                  <th>수정일시</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%
+                     for(var i=0; i<rows.length; i++)
+                     {
+                        var oneItem = rows[i];
+                %>
+                    <tr>
+                        <td><input type="checkbox" value=""></td>
+                        <td><%=i+1%></td>
+                        <td><span data-toggle="modal" data-target="#update_modal"><%=oneItem.TITLE%></span></td>
+                        <td><%=oneItem.BODY%></td>
+                        <td><%=oneItem.UPDATEDAT%></td>
+                    </tr>
+
+                <%
+                     }
+                %>
+
+              </tbody>
+            </table>
+
+            <button type="button" class="btn btn-info center-block">더보기...</button>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- 등록 Modal -->
+      <div id="insert_modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">게시판 등록</h4>
+            </div>
+            <form id="insert-form">
+                <div class="modal-body login-form">
+                    <div class="form-group">
+                        <input type="title" id="title" name="title" class="form-control login-field" value="" placeholder="제목을 입력하세요" id="form_title">
+                        <label class="login-field-icon fui-mail" for="form_title"></label>
+
+                        <label for="body"></label>
+                        <textarea class="form-control" rows="5" id="body" name="body" placeholder="내용을 입력하세요" ></textarea>
+                        <br/>
+                        <div class="form-inline form-group">
+                          <label for="author" >등록자</label>
+                          <input type="text" id="author" name="author" class="form-control" value="<%= user.email %>" st yle="width:38%" readonly="true">
+                          &nbsp;&nbsp;
+                          <label for="updatedAt">등록일자</label>
+                          <input type="datetime" id="updatedAt" name="updatedAt" class="form-control" value="2017-01-21"  style="width:38%" readonly="true">
+                          <!-- <div class="input-group input-append date" id="dateRangePicker"> </div> -->
+                        </div>
+                      </form>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Close"/>
+                    <input id="insert_btn" type="submit" class="btn btn-primary" value="OK"/>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div id="update_modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">게시판 수정</h4>
+            </div>
+            <form id="update-form">
+                <div class="modal-body login-form">
+                    <div class="form-group">
+                        <input type="title" name="title" class="form-control login-field" value="2017 새해인사" placeholder="제목을 입력하세요" id="form_title">
+                        <label class="login-field-icon fui-mail" for="form_title"></label>
+
+                        <label for="body"></label>
+                        <textarea class="form-control" rows="5" id="body" placeholder="내용을 입력하세요" >2017년을 맞이하여..화이팅합시다
+                        </textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Close"/>
+                    <input id="update_btn" type="submit" class="btn btn-primary" value="OK"/>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="container-fluid text-center">
+  <p>이용약관 블로그 운영원칙 개인정보처리방침 책임의 한계와 법적고지 포스트 권리 보호하기 게시중단요청서비스 블로그 고객센터<br/>
+    Copyright © Sillim Study Corp. All Rights Reserved.</p>
+</footer>
+
+</body>
+<script>
+
+  $(function() { //회원가입
+      //$('#title').focus();
+      //등록
+      $('#insert_btn').click(function() {
+          $.ajax({
+              url: '/board/board_insert',
+              method: 'POST',
+              data: $('#insert-form').serialize(),
+              success: function(msg) {
+                  $('#insert_modal').modal('hide');
+              }
+          });
+          return false;
+      });
+
+      //수정
+      $('#update_btn').click(function() {
+        alert("update");
+          $.ajax({
+              url: '/board/board_update',
+              method: 'POST',
+              data: $('#update-form').serialize(),
+              success: function(msg) {
+                  $('#update_modal').modal('hide');
+              }
+          });
+          return false;
+      });
+  });
+
+  function doDelete(){
+    confirm("선택한 글을 삭제하시겠습니까?")
+  }
+</script>
+
+</html>
