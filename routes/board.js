@@ -10,6 +10,20 @@ router.get('/', function(req, res, next) {
 });
 
 //게시판 리스트
+router.get('/board_lists', function(req, res, next){
+  connection.getConnection(function (err, connection) {
+    var sqlSelectList = "SELECT TITLE,BODY,AUTHOR,VIEWS,NUMID,DATE_FORMAT(CREATEDAT,'%Y-%m-%d %H:%i:%s') CREATEDAT,DATE_FORMAT(UPDATEDAT,'%Y-%m-%d %H:%i:%s') UPDATEDAT FROM TB_BOARD";
+    connection.query(sqlSelectList, function (err, rows) {
+      if (err){
+        console.error("err : " + err);
+      }
+      res.send(rows);
+      connection.release();
+    });
+  });
+});
+
+//게시판 리스트
 router.get('/board_main', function(req, res, next){
   if (req.isAuthenticated()) {
     connection.getConnection(function (err, connection) {
@@ -19,7 +33,6 @@ router.get('/board_main', function(req, res, next){
           console.error("err : " + err);
         }
         res.render('board', {user: req.session.passport.user, rows: rows});
-        //res.render('board', {title: 'MeanStack Study'});    // 기본페이지
         connection.release();
       });
     });

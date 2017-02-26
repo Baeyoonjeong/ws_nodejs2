@@ -12,6 +12,16 @@
 
   <script>
     var app = angular.module('myBoard', []);
+
+    app.controller('selectBoard', function($http,$scope){
+
+      $scope.list = [];
+      $http.get("/board/board_lists",$scope.new).success(function(data){
+        console.log(data);
+        $scope.list = data;
+      });
+    });
+
     //게시판등록
     app.controller('insertBoard', ['$http','$scope', function($http,$scope){
       var refresh = function(){
@@ -28,18 +38,10 @@
 
     //게시판수정
     app.controller('updateBoard', ['$http','$scope', function($http,$scope){
-      var refresh = function(){
-        $scope.old = "";
-        //ng-model 들을 old 써놨으니까 나중에 비워주려고 만들었음
-      }
-      $scope.doUpdate = function(){
-        console.log(">>>>>>>>>>>doUpdate");
-        $http.post("/board/update",$scope.old).success(function(){
-          alert("회원가입 되었습니다.");
-          $('#update_modal').modal('hide');
-          refresh();
-        });
-      }
+      $scope.$watch('title', function(newValue, oldValue) {
+        if (newValue === oldValue) { return; } // AKA first run
+        $scope.updated++;
+      });
     }]);
 
 
@@ -106,7 +108,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-          <a href="/users/logout"><strong>배윤정 님</strong>&nbsp;&nbsp; <span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp; Logout</a>
+          <a href="/users/logout"><strong><%user%> 님</strong>&nbsp;&nbsp; <span class="glyphicon glyphicon-log-in"></span>&nbsp;&nbsp; Logout</a>
         </li>
         <!-- <li><span style="color:white"><%= user.email %> 님</span></li> -->
       </ul>
@@ -122,7 +124,7 @@
     </div>
     <div class="col-sm-8 text-left">
       <br/>
-      <div class="container">
+      <div class="container" ng-controller="selectBoard">
         <div class="panel panel-default">
           <div class="panel-heading">
             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#insert_modal">등록</button>
@@ -133,30 +135,20 @@
               <thead>
                 <tr>
                   <th width="40px"></th>
-                  <th width="50px"></th>
+                  <th width="50px">NO</th>
                   <th width="350px">제목</th>
                   <th width="450px">내용</th>
                   <th>수정일시</th>
                 </tr>
               </thead>
               <tbody>
-                <%
-                     for(var i=0; i<rows.length; i++)
-                     {
-                        var oneItem = rows[i];
-                %>
-                    <tr>
-                        <td><input type="checkbox" value=""></td>
-                        <td><%=i+1%></td>
-                        <td><span data-toggle="modal" data-target="#update_modal"><%=oneItem.TITLE%></span></td>
-                        <td><%=oneItem.BODY%></td>
-                        <td><%=oneItem.UPDATEDAT%></td>
-                    </tr>
-
-                <%
-                     }
-                %>
-
+                <tr ng-repeat="item in list">
+                  <td><input type="checkbox" value=""></td>
+                  <td>{{ item.NUMID }}</td>
+                  <td><span data-toggle="modal" data-target="#update_modal">{{ item.TITLE }}</span></td>
+                  <td>{{ item.BODY }}</td>
+                  <td>{{ item.UPDATEDAT }}</td>
+                </tr>
               </tbody>
             </table>
 
