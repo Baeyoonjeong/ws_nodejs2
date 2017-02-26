@@ -33,11 +33,10 @@ module.exports = function (app) {
               return done(err);
             }
             if(!user) {
-              //return done(null, false, req.flash('loginError', 'No user found.'));
-              return done(null, false); // create the loginMessage and save it to session as flashdata
+              return done(null, false, { loginError:'No user found.' });
             }
             if(user.PASSWORD != password){
-              return done(null, false); // create the loginMessage and save it to session as flashdata
+              return done(null, false, { loginError:'Incorrect password' });
             }
 
             return done(null, user);

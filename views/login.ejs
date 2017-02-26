@@ -2,39 +2,15 @@
 <html ng-app="myApp">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title><%= title %></title>
+    <title>Login</title>
 
-    <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <!-- font awesome -->
-    <link href="css/font-awesome.min.css" rel="stylesheet">
-
-    <!-- angularJS CDN script 태그 추가  -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/latest/js/bootstrap.min.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
-
 
     <script>
       var app = angular.module('myApp', []);
-
-
-      /*
-       main state 정의 ('/' 라우팅)
-      */
-      // app.config(function($locationProvider, $routeProvider) {
-      //     $routeProvider
-      //       .when('/board', { // 상태 정의
-      //         templateUrl: 'board.ejs', // 템플릿 경로
-      //         controller: 'MainCtrl', // 컨트롤러 이름
-      //     });
-      // });
 
       app.controller("myCtrl",function($scope, $http, $location) {
         $scope.email = 'bae419@naver.com';
@@ -49,55 +25,121 @@
             password: $scope.password
           }).success(function (data, status) {
             // 인증 성공시 메인페이지('/')로 이동
+            console.log("____________________"+data);
             location.href ="/board/board_main";
-            //$scope.apply();
-            console.log(data);
+
           }).error(function (data, status) {
             console.log(data, status);
-
             // 인증 실패시 재로그인을 안내한다.
             $scope.msg = '로그인 정보 오류: 로그인 정보를 다시 입력하세요.';
           });
         };
-
-        //회원가입
-        $scope.goJoin = function () {
-          $scope.msg = '';
-        }
       });
+
+      //회원가입
+      app.controller('myModal', ['$http','$scope', function($http,$scope){
+        var refresh = function(){
+          $scope.join = "";
+          //ng-model 들을 join로 써놨으니까 나중에 비워주려고 만들었음
+        }
+        $scope.goJoin = function(){
+          $http.post("/users/join",$scope.join).success(function(){
+            alert("회원가입 되었습니다.");
+            $('#myModal').modal('hide');
+            refresh();
+          });
+        }
+      }]);
     </script>
+
+    <style>
+        body {
+            background: #f8f8f8;
+            padding: 60px 0;
+        }
+
+        #login-form > div {
+            margin: 15px 0;
+        }
+
+    </style>
   </head>
-  <body ng-controller="myCtrl">
-    <div class="container">
-      <div class="row">
-        <div class="page-header">
-          <h2>심플한 로그인 폼</h2>
-        </div>
-        <div class="col-md-3">
-          <div class="login-box well">
-            <form accept-charset="UTF-8" role="form" method="post" ng-submit="goLogin()">
-                <legend>로그인</legend>
-                <div class="form-group">
-                    <label for="username-email">이메일</label>
-                    <input name="email"  id="email" placeholder="E-mail" type="text" class="form-control" ng-model="email"/>
+  <body >
+      <div class="container" ng-controller="myCtrl">
+          <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+              <div class="panel panel-success">
+                  <div class="panel-heading">
+                      <div class="panel-title">환영합니다!</div>
+                  </div>
+                  <div class="panel-body">
+                      <form id="login-form" method="POST" ng-submit="goLogin()">
+                          <div>
+                              <input type="text" class="form-control" name="email" placeholder="email" value="bae419@naver.com" autofocus ng-model="email"/>
+                          </div>
+                          <div>
+                              <input type="password" class="form-control" name="password" placeholder="password" value="1111" ng-model="password"/>
+                          </div>
+                              <p style="color:red"><%= loginError %></p>
+                          <div>
+                              <button type="submit" class="form-control btn btn-primary">로그인</button>
+                              <button type="button" class="form-control btn btn-success" data-toggle="modal" data-target="#myModal">회원가입</button>
+                          </div>
+                      </form>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- Modal -->
+      <div id="myModal" class="modal fade" role="dialog" ng-controller="myModal">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Join</h4>
+            </div>
+            <form id="join-form">
+                <div class="modal-body login-form">
+                    <div class="form-group">
+                        <input type="email" name="email" class="form-control login-field" value="" placeholder="Enter your email" ng-model="join.email">
+                        <label class="login-field-icon fui-mail" for="JOIN_form_email"></label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="nickname" class="form-control login-field" value="" placeholder="Enter your nickname" ng-model="join.nickname">
+                        <label class="login-field-icon fui-user" for="JOIN_form_nickname"></label>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" class="form-control login-field" value="" placeholder="Password" ng-model="join.password">
+                        <label class="login-field-icon fui-lock" for="LOGIN_form_password"></label>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="repassword" class="form-control login-field" value="" placeholder="Re Password" ng-model="join.repassword">
+                        <label class="login-field-icon fui-lock" for="LOGIN_form_repassword"></label>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="password">비밀번호</label>
-                    <input name="password" id="password"  placeholder="Password" type="password" class="form-control" ng-model="password"/>
-                </div>
-                <div class="form-group">
-                  <p style="color:red"><%= loginError %></p>
-                <div>
-                <div class="form-group">
-                    <input type="submit" class="btn btn-default btn-login-submit btn-block m-t-md" value="Login" />
-                    <button class="btn btn-default btn-login-submit btn-block m-t-md" ng-click="goLogin()" >회원가입</button>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Close" style="margine-bottom : 10px"/>
+                    <input id="join" type="submit" class="btn btn-primary" ng-click="goJoin()" value="OK"/>
                 </div>
             </form>
           </div>
         </div>
       </div>
-    </div>
-
-
+      <!-- <script>
+          $(function() { //회원가입
+              $('#join').click(function() {
+                  $.ajax({
+                      url: '/join',
+                      method: 'POST',
+                      data: $('#join-form').serialize(),
+                      success: function(msg) {
+                          $('#myModal').modal('hide');
+                      }
+                  });
+                  return false;
+              });
+          });
+      </script> -->
   </body>
-  </html>
+</html>

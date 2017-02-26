@@ -1,17 +1,18 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
+var connection     = require('../config/database_mysql');
 
 router.get('/login', function(req, res, next){
   console.log("/login"); // This returns an array
-  res.render('login', {title: 'MeanStack Study', loginError: 'loginError'});    // 기본페이지
+  res.render('login', {title: 'MeanStack Study'});    // 기본페이지
 });
 
 //페이지별로 로그인이 되었는지를 확인하고, 로그인이 되어 있을 경우 HTTP request에서 사용자 정보를 가지고 오는 코드
 router.get('/login_success', function(req, res){
     console.log("/login_success");
     res.redirect('/board/');
-    //res.send(req.user);
+    res.send(req.user);
 });
 
 router.route('/login').post(
@@ -29,22 +30,26 @@ router.get('/logout', function(req, res) {
 
 //회원가입
 router.post('/join', function(req, res) {
-  console.log("req.body : " + JSON.stringify(req.body));
-  var param = req.body;
-  var user = new User();
-  user.email = param.email;
-  user.nickname = param.nickname;
-  user.password = param.password;
-  user.save(function(err, user) {
-    var msg = '';
-	  if (err) {
-      console.error(err);
-      msg = 'join fail';
-    }
-		res.send(msg).end();
+  var email = req.body.email;
+  var nickname = req.body.nickname;
+  var password = req.body.password;
+  //console.log(">>>>>>param : " +JSON.stringify(param));
+  connection.getConnection(function(err, conn){
+    var sqlSelectList = "INSERT INTO TB_USER ( EMAIL ,NICKNAME ,PASSWORD ,REGDT) VALUES( ?, ?, ?, SYSDATE())";
+    connection.query(sqlSelectList, [email, nickname, password], function(err, rows){
+        if(err){
+          console.error(err);
+          throw err;
+        }
+        res.send(200, 'success');
+      });
   });
+
+
+
+
+
+
 });
-
-
 
 module.exports = router;
