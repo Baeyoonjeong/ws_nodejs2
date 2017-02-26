@@ -1,13 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="myBoard">
 <head>
   <title>Bootstrap Example</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <!-- <script type="text/javascript" src="/bootstrap/js/bootstrap-datepicker.kr.js"></script> -->
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/latest/js/bootstrap.min.js"></script>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+
+  <script>
+    var app = angular.module('myBoard', []);
+    //게시판등록
+    app.controller('insertBoard', ['$http','$scope', function($http,$scope){
+      var refresh = function(){
+        $scope.new = "";
+      }
+      $scope.doInsert = function(){
+        $http.post("/board/insert",$scope.new).success(function(){
+          alert("등록되었습니다.");
+          $('#insert_modal').modal('hide');
+          refresh();
+        });
+      }
+    }]);
+
+    //게시판수정
+    app.controller('updateBoard', ['$http','$scope', function($http,$scope){
+      var refresh = function(){
+        $scope.old = "";
+        //ng-model 들을 old 써놨으니까 나중에 비워주려고 만들었음
+      }
+      $scope.doUpdate = function(){
+        console.log(">>>>>>>>>>>doUpdate");
+        $http.post("/board/update",$scope.old).success(function(){
+          alert("회원가입 되었습니다.");
+          $('#update_modal').modal('hide');
+          refresh();
+        });
+      }
+    }]);
+
+
+    //doDelete
+
+
+
+
+  </script>
+
 
   <style>
     /* Remove the navbar's default margin-bottom and rounded borders */
@@ -84,7 +126,7 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#insert_modal">등록</button>
-            <button type="button" class="btn btn-success btn-xs" onclick="doDelete()">삭제</button>
+            <button type="button" class="btn btn-success btn-xs" ng-click="doDelete()">삭제</button>
           </div>
           <div class="panel-body">
             <table class="table table-hover">
@@ -125,7 +167,7 @@
       </div>
 
       <!-- 등록 Modal -->
-      <div id="insert_modal" class="modal fade" role="dialog">
+      <div id="insert_modal" class="modal fade" role="dialog" ng-controller="insertBoard">
         <div class="modal-dialog">
           <!-- Modal content-->
           <div class="modal-content">
@@ -133,35 +175,37 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">게시판 등록</h4>
             </div>
-            <form id="insert-form">
-                <div class="modal-body login-form">
-                    <div class="form-group">
-                        <input type="title" id="title" name="title" class="form-control login-field" value="" placeholder="제목을 입력하세요" id="form_title">
-                        <label class="login-field-icon fui-mail" for="form_title"></label>
 
-                        <label for="body"></label>
-                        <textarea class="form-control" rows="5" id="body" name="body" placeholder="내용을 입력하세요" ></textarea>
-                        <br/>
-                        <div class="form-inline form-group">
-                          <label for="author" >등록자</label>
-                          <input type="text" id="author" name="author" class="form-control" value="<%= user.email %>" st yle="width:38%" readonly="true">
-                          &nbsp;&nbsp;
-                          <label for="updatedAt">등록일자</label>
-                          <input type="datetime" id="updatedAt" name="updatedAt" class="form-control" value="2017-01-21"  style="width:38%" readonly="true">
-                          <!-- <div class="input-group input-append date" id="dateRangePicker"> </div> -->
-                        </div>
-                      </form>
+            <div class="modal-body login-form">
+              <form id="insert-form">
+                <div class="form-group">
+                    <input type="title" name="title" class="form-control login-field" value="" placeholder="제목을 입력하세요" ng-model="new.title">
+                    <label class="login-field-icon fui-mail" for="form_title"></label>
+
+                    <label for="body"></label>
+                    <textarea class="form-control" rows="5" name="body" placeholder="내용을 입력하세요" ng-model="new.body"></textarea>
+                    <br/>
+                    <div class="form-inline form-group">
+                      <label for="author" >등록자</label>
+                      <input type="text" id="author" name="author" class="form-control" value="<%= user.email %>" style="width:38%" readonly="true">
+                      &nbsp;&nbsp;
+                      <label for="updatedAt">등록일자</label>
+                      <input type="datetime" id="updatedAt" name="updatedAt" class="form-control" value="2017-01-21"  style="width:38%" readonly="true">
+                      <!-- <div class="input-group input-append date" id="dateRangePicker"> </div> -->
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Close"/>
-                    <input id="insert_btn" type="submit" class="btn btn-primary" value="OK"/>
-                </div>
-            </form>
+              </form>
+            </div>
+            <div class="modal-footer">
+                <input type="button" class="btn btn-default" data-dismiss="modal" value="Close"/>
+                <input id="insert_btn" type="submit" class="btn btn-primary" ng-click="doInsert()" value="OK"/>
+            </div>
           </div>
         </div>
       </div>
 
-      <div id="update_modal" class="modal fade" role="dialog">
+      <!-- 수정 Modal -->
+      <div id="update_modal" class="modal fade" role="dialog" ng-controller="updateBoard">
         <div class="modal-dialog">
           <!-- Modal content-->
           <div class="modal-content">
@@ -169,25 +213,35 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">게시판 수정</h4>
             </div>
-            <form id="update-form">
-                <div class="modal-body login-form">
-                    <div class="form-group">
-                        <input type="title" name="title" class="form-control login-field" value="2017 새해인사" placeholder="제목을 입력하세요" id="form_title">
-                        <label class="login-field-icon fui-mail" for="form_title"></label>
 
-                        <label for="body"></label>
-                        <textarea class="form-control" rows="5" id="body" placeholder="내용을 입력하세요" >2017년을 맞이하여..화이팅합시다
-                        </textarea>
+            <div class="modal-body login-form">
+              <form id="update-form">
+                <div class="form-group">
+                    <input type="title" name="title" class="form-control login-field" value="" placeholder="제목을 입력하세요" ng-model="new.title">
+                    <label class="login-field-icon fui-mail" for="form_title"></label>
+
+                    <label for="body"></label>
+                    <textarea class="form-control" rows="5" name="body" placeholder="내용을 입력하세요" ng-model="new.body"></textarea>
+                    <br/>
+                    <div class="form-inline form-group">
+                      <label for="author" >등록자</label>
+                      <input type="text" id="author" name="author" class="form-control" value="<%= user.email %>" style="width:38%" readonly="true">
+                      &nbsp;&nbsp;
+                      <label for="updatedAt">등록일자</label>
+                      <input type="datetime" id="updatedAt" name="updatedAt" class="form-control" value="2017-01-21"  style="width:38%" readonly="true">
+                      <!-- <div class="input-group input-append date" id="dateRangePicker"> </div> -->
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Close"/>
-                    <input id="update_btn" type="submit" class="btn btn-primary" value="OK"/>
-                </div>
-            </form>
+              </form>
+            </div>
+            <div class="modal-footer">
+                <input type="button" class="btn btn-default" data-dismiss="modal" value="Close"/>
+                <input id="update_btn" type="submit" class="btn btn-primary" ng-click="doUpdate()" value="OK"/>
+            </div>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </div>
@@ -198,41 +252,6 @@
 </footer>
 
 </body>
-<script>
 
-  $(function() { //회원가입
-      //$('#title').focus();
-      //등록
-      $('#insert_btn').click(function() {
-          $.ajax({
-              url: '/board/board_insert',
-              method: 'POST',
-              data: $('#insert-form').serialize(),
-              success: function(msg) {
-                  $('#insert_modal').modal('hide');
-              }
-          });
-          return false;
-      });
-
-      //수정
-      $('#update_btn').click(function() {
-        alert("update");
-          $.ajax({
-              url: '/board/board_update',
-              method: 'POST',
-              data: $('#update-form').serialize(),
-              success: function(msg) {
-                  $('#update_modal').modal('hide');
-              }
-          });
-          return false;
-      });
-  });
-
-  function doDelete(){
-    confirm("선택한 글을 삭제하시겠습니까?")
-  }
-</script>
 
 </html>

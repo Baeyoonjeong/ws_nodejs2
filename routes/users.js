@@ -41,6 +41,7 @@ router.post('/join', function(req, res) {
           console.error(err);
           throw err;
         }
+        console.log(query);
         res.send(200, 'success');
       });
   });

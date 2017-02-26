@@ -29,27 +29,23 @@ router.get('/board_main', function(req, res, next){
 });
 
 //게시판 등록
-router.post('/board_insert', function(req, res) {
-  console.log("req.body : " + JSON.stringify(req.body));
-  var param = req.body;
-  //var board = new Board();
-
-  var title = param.title;
-  var body = param.body;
-  var author = param.author;
-  var datas = [title,body,author];
-
-  connection.getConnection(function (err, connection) {
-    // Use the connection
-    var sqlForInsertBoard = "INSERT INTO BOARD ( TITLE, BODY, NUMID, AUTHOR, CREATEDAT, UPDATEDAT ) VALUES(?, ?, 1, ?, NOW(), NOW())";
-    connection.query(sqlForInsertBoard,datas, function (err, rows) {
-       if (err) console.error("err : " + err);
-       console.log("rows : " + JSON.stringify(rows));
-       res.render('board', {title: 'MeanStack Study', user: req.session.passport.user, rows: rows});
-
-       connection.release();
-       // Don't use the connection here, it has been returned to the pool.
-    });
+router.post('/insert', function(req, res) {
+  console.log(req.body.title);
+  var title  = req.body.title;
+  var body   = req.body.body;
+  var author = "session";
+  var view   = 1;
+  var numid  = 1;
+  //console.log(">>>>>>param : " +JSON.stringify(param));
+  connection.getConnection(function(err, conn){
+    var sqlSelectList = "INSERT INTO TB_BOARD ( TITLE, BODY, AUTHOR, VIEWS, NUMID, CREATEDAT, UPDATEDAT) VALUES( ?, ?, ?, ?, ?,  SYSDATE(), SYSDATE() )";
+    connection.query(sqlSelectList, [title, body, author, view, numid], function(err, rows){
+        if(err){
+          console.error(err);
+          throw err;
+        }
+        res.send(200, 'success');
+      });
   });
 });
 
